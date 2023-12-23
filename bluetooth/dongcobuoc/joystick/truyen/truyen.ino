@@ -1,6 +1,7 @@
 #include <IRremote.h>
+#include <SoftwareSerial.h>
 
-IRsend irsend(3);
+SoftwareSerial BTSerial(10, 11);
 
 const int pinX = A0;
 const int pinY = A1;
@@ -8,6 +9,7 @@ const int pinBtn = 13;
 
 void setup() {
   Serial.begin(9600);
+  BTSerial.begin(9600);
   pinMode(pinBtn, INPUT_PULLUP);
 }
 
@@ -29,9 +31,9 @@ void loop() {
   Serial.println(btn);
 
   if (x > 600) {
-    irsend.sendRC5(0x0, 8);
+    BTSerial.write('0');
   } else if(x < 400) {
-    irsend.sendRC5(0x1, 8);
+    BTSerial.write('1');
   }
   delay(100);
 }

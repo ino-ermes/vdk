@@ -27,5 +27,4 @@ void loop() {
       stepper.runToPosition();
     }
   }
-  delay(300);
 }

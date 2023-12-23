@@ -10,6 +10,7 @@ void setup() {
   stepper.setAcceleration(100);
   Serial.begin(9600);
   BTSerial.begin(9600);
+  pinMode(7, OUTPUT);
 }
 
 char value = '\0';
@@ -20,12 +21,14 @@ void loop() {
     Serial.write(value);
     Serial.write('\n');
     if (value == '0') {
-      stepper.move((int)(90.0 * 1.8));
-      stepper.runToPosition();
+      // stepper.move((int)(90.0 * 1.8));
+      // stepper.runToPosition();
+      digitalWrite(7, HIGH);
     } else if (value == '1') {
-      stepper.move((int)(-45.0 * 1.8));
-      stepper.runToPosition();
+      // stepper.move((int)(-45.0 * 1.8));
+      // stepper.runToPosition();
+      digitalWrite(7, LOW);
+
     }
   }
-  delay(300);
 }

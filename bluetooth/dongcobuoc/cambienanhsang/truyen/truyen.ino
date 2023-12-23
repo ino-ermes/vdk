@@ -7,14 +7,13 @@ const int pinLight = A0;
 void setup() {
   Serial.begin(9600);
   BTSerial.begin(9600);
-
 }
 
 int light = 0;
 void loop() {
   light = analogRead(pinLight);
   Serial.println(light);
-  if (light < 100) {
+  if (light < 950) {
     BTSerial.write('0');
   } else {
     BTSerial.write('1');

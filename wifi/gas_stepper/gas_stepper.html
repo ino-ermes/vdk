@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>ESP8266 Control Panel</title>
+   </head>
+   <!-- <body onload="updateData()"> -->
+   <body>
+      <h1>ESP8266 Control Panel</h1>
+      <h2>Điều khiển Stepper</h2>
+      <input type="number" id="stepperAngle" placeholder="Nhập góc" />
+      <button onclick="controlStepper()">Điều khiển Stepper</button>
+      <p id="gas">Loading...</p>
+      <script>
+         var espServer = "http://192.168.191.12"
+        function getGas() {
+            fetch(espServer + "/gas")
+                 .then((response) => {
+                     if (!response.ok) {
+                         throw new Error('Network response was not ok');
+                     }
+                     return response.text();
+                 })
+                 .then((data) => {
+                     console.log("gas:", data);
+                     document.getElementById("gas").innerText = "gas: " + data;
+                 })
+                 .catch(error => console.error('Error:', error));
+        }
+
+         function updateData() {
+             getGas();
+         }
+
+         setInterval(updateData, 1000);
+
+         function controlStepper() {
+             const angle = document.getElementById("stepperAngle").value;
+             fetch(espServer + `/stepper?angle=${angle}`)
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error('Network response was not ok');
+                     }
+                     console.log("Stepper controlled");
+                 })
+                 .catch(error => console.error('Error:', error));
+         }
+      </script>
+   </body>
+</html>

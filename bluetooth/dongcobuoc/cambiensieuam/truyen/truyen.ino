@@ -1,6 +1,6 @@
-#include <IRremote.h>
+#include <SoftwareSerial.h>
 
-IRsend irsend(3);
+SoftwareSerial BTSerial(10, 11);
 
 const int trig = 8;  // chân trig của HC-SR04
 const int echo = 7;  // chân echo của HC-SR04
@@ -9,6 +9,7 @@ void setup() {
   pinMode(trig, OUTPUT);  // chân trig sẽ phát tín hiệu
   pinMode(echo, INPUT);   // chân echo sẽ nhận tín hiệu
   Serial.begin(9600);
+  BTSerial.begin(9600);
 }
 
 unsigned long duration;  // biến đo thời gian
@@ -32,9 +33,10 @@ void loop() {
   Serial.println("cm");
 
   if (distance < 10) {
-    irsend.sendRC5(0x0, 8);
+    BTSerial.write('0');
   } else {
-    irsend.sendRC5(0x1, 8);
+    BTSerial.write('1');
+
   }
   delay(100);
 }
