@@ -1,21 +1,27 @@
-#include <IRremote.h>
+#include <SoftwareSerial.h>
 
-IRsend irsend(3);
+SoftwareSerial BTSerial(10, 11);
 
 const int pinGas = A0;
 
 void setup() {
   Serial.begin(9600);
+  BTSerial.begin(9600);
 }
 
 int gas = 0;
 void loop() {
-  gas = analogRead(pinGas);
-  Serial.println(gas);
-  if (gas < 100) {
-    irsend.sendRC5(0x0, 8);
-  } else {
-    irsend.sendRC5(0x1, 8);
+
+  if(BTSerial.available()) {
+    BTSerial.read();
+
+    gas = analogRead(pinGas);
+    Serial.println(gas);
+    
+    if(gas > 100)
+      BTSerial.write('0'); // thuan
+    else
+      BTSerial.write('1'); // nguoc
   }
-  delay(100);
+
 }

@@ -11,12 +11,17 @@ void setup() {
 
 int gas = 0;
 void loop() {
-  gas = analogRead(pinGas);
-  Serial.println(gas);
-  if (gas < 100) {
-    BTSerial.write('0');
-  } else {
-    BTSerial.write('1');
+
+  if(BTSerial.available()) {
+    BTSerial.read();
+
+    gas = analogRead(pinGas);
+    Serial.println(gas);
+    
+    if(gas > 100)
+      BTSerial.write('0'); // thuan
+    else
+      BTSerial.write('1'); // nguoc
   }
-  delay(100);
+
 }

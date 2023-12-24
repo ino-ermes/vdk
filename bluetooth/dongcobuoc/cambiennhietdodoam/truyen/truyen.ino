@@ -1,35 +1,43 @@
-#include <DHT11.h>
+#include <DHT.h>
 #include <IRremote.h>
+#include <SoftwareSerial.h>
 
-IRsend irsend(3);
+SoftwareSerial BTSerial(10, 11);
 
-DHT11 dht11(2);
+DHT dht(2, DHT11);
 
 void setup() {
   Serial.begin(9600);
+  BTSerial.begin(9600);
+  dht.begin();
 }
 
-float temperature = 0;
-int humidity = 0;
+float temperature = 0.0;
+float humidity = 0.0;
+float tmp = 0.0;
 
 void loop() {
-  temperature = dht11.readTemperature();
-  humidity = dht11.readHumidity();
 
-  if (temperature != DHT11::ERROR_CHECKSUM && temperature != DHT11::ERROR_TIMEOUT && humidity != DHT11::ERROR_CHECKSUM && humidity != DHT11::ERROR_TIMEOUT) {
-    Serial.print("Temperature: ");
-    Serial.print(temperature);
-    Serial.println(" °C");
+  if(BTSerial.available()) {
+    BTSerial.read();
 
-    Serial.print("Humidity: ");
-    Serial.print(humidity);
-    Serial.println(" %");
+    tmp = dht.readTemperature();
+    if(!isnan(tmp))
+      temperature = tmp;
+    delay(50);
+    tmp = dht.readHumidity();
+    if(!isnan(tmp))
+      humidity = tmp;
 
-    if (humidity < 70) {
-      irsend.sendRC5(0x0, 8);
-    } else {
-      irsend.sendRC5(0x1, 8);
-    }
+    Serial.print("Nhiet do: ");
+    Serial.println(temperature);
+    delay(50);
+    Serial.print("Do am: ");
+    Serial.println(humidity);
+    delay(50);
+    if(temperature > 27.0)
+      BTSerial.write('0');
+    else
+      BTSerial.write('1');
   }
-  delay(1000);
 }

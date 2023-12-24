@@ -4,6 +4,9 @@
 const char* ssid = "Redmi Note 9S";
 const char* password = "qazwsx123";
 
+// const char* ssid = "TTHocLieuT2";
+// const char* password = "hoclieut2";
+
 // Khởi tạo đối tượng máy chủ web
 ESP8266WebServer server(80);
 

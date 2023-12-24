@@ -1,29 +1,32 @@
 #include <SoftwareSerial.h>
-#include <Servo.h>
 
-Servo myservo;
 SoftwareSerial BTSerial(10, 11);
+
+#include <TinyStepper.h>
+#define HALFSTEPS 4096
+TinyStepper stepper(HALFSTEPS, 2, 3, 4, 5);
+
+
 void setup() {
   Serial.begin(9600);
-  myservo.attach(11, 500, 2500);
   BTSerial.begin(9600);
 }
 
+int angle = 90;
 char value = '\0';
 void loop() {
-  if (BTSerial.available()) {
+  if(BTSerial.available()) {
     value = BTSerial.read();
-    Serial.write(value);
-    Serial.write('\n');
-    if (value == '0') {
-      myservo.write(90);
-      delay(500);
-      myservo.write(0);
-    } else if (value == '1') {
-      myservo.write(180);
-      delay(500);
-      myservo.write(0);
+    if(value == '0') {
+      angle = 90;
+    }  else if(value == '2') {
+      angle = 0;
+    } else {
+      angle = -45;
     }
+    stepper.Move(angle);
+  } else {
+    BTSerial.write(".");
   }
   delay(500);
 }

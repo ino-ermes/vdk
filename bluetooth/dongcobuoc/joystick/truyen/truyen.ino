@@ -30,10 +30,14 @@ void loop() {
   Serial.print("btn: ");
   Serial.println(btn);
 
-  if (x > 600) {
-    BTSerial.write('0');
-  } else if(x < 400) {
-    BTSerial.write('1');
+  if(BTSerial.available()) {
+    BTSerial.read();
+
+    if(x > 600)
+      BTSerial.write('0'); // thuan
+    else if(btn)
+      BTSerial.write('2'); // dung
+    else
+      BTSerial.write('1'); // nguoc
   }
-  delay(100);
 }

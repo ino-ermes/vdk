@@ -11,12 +11,14 @@ void setup() {
 
 int light = 0;
 void loop() {
-  light = analogRead(pinLight);
-  Serial.println(light);
-  if (light < 100) {
-    BTSerial.write('0');
-  } else {
-    BTSerial.write('1');
+  if(BTSerial.available()) {
+    BTSerial.read();
+    light = analogRead(pinLight);
+    Serial.println(light);
+    if(light > 800) {
+      BTSerial.write('0');
+    } else {
+      BTSerial.write('1');
+    }
   }
-  delay(100);
 }
