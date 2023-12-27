@@ -32,7 +32,7 @@ void loop() {
     } else {
       angle = 0;
     }
-    stepper.Move(angle);
+    stepper.Move(angle, 3);
   } else {
     BTSerial.write(".");
   }

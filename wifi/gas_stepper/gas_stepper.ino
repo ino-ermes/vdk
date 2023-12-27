@@ -18,7 +18,7 @@ void handleStepper() {
   String angleString = server.arg("angle");
   int angle = angleString.toInt();
   Serial.println(angle);
-  stepper.Move(angle);
+  stepper.Move(angle, 3);
   server.send(200, "text/plain", "success");
 }
 

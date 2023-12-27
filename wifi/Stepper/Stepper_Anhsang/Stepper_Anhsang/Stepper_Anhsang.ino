@@ -13,7 +13,7 @@ TinyStepper stepper(HALFSTEPS, D1, D2, D3, D4);
 void handleStepper() {
   String angleString = server.arg("angle");
   int angle = angleString.toInt();
-  stepper.Move(angle);
+  stepper.Move(angle, 3);
   server.send(200, "text/plain", "success");
 }
 
