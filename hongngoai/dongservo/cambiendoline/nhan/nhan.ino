@@ -1,29 +1,33 @@
 #include <IRremote.h>
-#include <Servo.h>
+#define IR_RECEIVE_PIN 2
 
+
+#include <Servo.h>
 Servo myservo;
-IRrecv irrecv(9);
-decode_results results;
+const int pinServo = 2;
 
 void setup() {
   Serial.begin(9600);
-  myservo.attach(11, 500, 2500);
-  irrecv.enableIRIn();
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+
+  myservo.attach(pinServo);
 }
 
 void loop() {
-  if (irrecv.decode(&results)) {
-    if (results.value == 256) {
+  if (IrReceiver.decode()) {
+    IrReceiver.printIRResultShort(&Serial);
+
+    if(IrReceiver.decodedIRData.command == 0x34) {
       myservo.write(90);
-      delay(500);
+      delay(100);
       myservo.write(0);
+      delay(250);
     } else {
-      myservo.write(180);
-      delay(500);
+      myservo.write(45);
+      delay(100);
       myservo.write(0);
+      delay(250);
     }
-    Serial.println(results.value);
-    irrecv.resume();
+    IrReceiver.resume();
   }
-  delay(500);
 }

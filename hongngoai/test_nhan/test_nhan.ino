@@ -1,16 +1,23 @@
 #include <IRremote.h>
 
-IRrecv irrecv(9);
-decode_results results;
+#define IR_RECEIVE_PIN 2
 
 void setup() {
   Serial.begin(9600);
-  irrecv.enableIRIn();
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
 }
 
 void loop() {
-  if (irrecv.decode(&results)) {
-    Serial.println(results.value);
-    irrecv.resume();
+  if (IrReceiver.decode()) {
+
+    IrReceiver.printIRResultShort(&Serial);
+    if (IrReceiver.decodedIRData.protocol == UNKNOWN) {
+      Serial.println(F("Received noise or an unknown (or not yet enabled) protocol"));
+    }
+    Serial.println();
+
+    IrReceiver.resume();
+    // print re
+    // Serial.println(IrReceiver.decodedIRData.command, HEX);
   }
 }

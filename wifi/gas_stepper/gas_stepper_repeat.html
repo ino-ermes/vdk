@@ -8,7 +8,7 @@
       <h1>ESP8266 Control Panel</h1>
       <h2>Điều khiển Stepper</h2>
       <input type="number" id="stepperAngle" placeholder="Nhập góc" />
-      <button onclick="controlStepper()">Điều khiển Stepper</button>
+      <button onclick="handleSubmitStepper()">Điều khiển Stepper</button>
       <p id="gas">Loading...</p>
       <script>
          var espServer = "http://192.168.191.198"
@@ -33,17 +33,27 @@
 
          setInterval(updateData, 1000);
 
+         let sendAngle = 0;
+
+         function handleSubmitStepper() {
+            sendAngle = document.getElementById("stepperAngle").value;
+         }
+
          function controlStepper() {
-             const angle = document.getElementById("stepperAngle").value;
-             fetch(espServer + `/stepper?angle=${angle}`)
+             fetch(espServer + `/stepper?angle=${sendAngle}`)
                  .then(response => {
                      if (!response.ok) {
                          throw new Error('Network response was not ok');
                      }
                      console.log("Stepper controlled");
                  })
-                 .catch(error => console.error('Error:', error));
+                 .catch(error => console.error('Error:', error))
+                 .finally(() => {
+                    setTimeout(controlStepper, 1000);
+                 });
          }
+
+         controlStepper();
       </script>
    </body>
 </html>

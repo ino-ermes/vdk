@@ -1,28 +1,33 @@
-#include <AccelStepper.h>
 #include <IRremote.h>
+#define IR_RECEIVE_PIN 2
 
-IRrecv irrecv(9);
-decode_results results;
-AccelStepper stepper;
+
+#include <TinyStepper.h>
+#define HALFSTEPS 4096
+#define IN1 8
+#define IN2 9
+#define IN3 10
+#define IN4 11
+TinyStepper stepper(HALFSTEPS, IN1, IN2, IN3, IN4);
 
 void setup() {
-  stepper.setMaxSpeed(150);
-  stepper.setAcceleration(100);
   Serial.begin(9600);
-  irrecv.enableIRIn();
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
 }
 
 void loop() {
-  if (irrecv.decode(&results)) {
-    if (results.value == 256) {
-      stepper.move((int)(90.0 * 1.8));
-      stepper.runToPosition();
+  if (IrReceiver.decode()) {
+    IrReceiver.printIRResultShort(&Serial);
+
+    if(IrReceiver.decodedIRData.command == 0x34) {
+      stepper.Move(90, 3);
     } else {
-      stepper.move((int)(-45.0 * 1.8));
-      stepper.runToPosition();
+      stepper.Move(-45, 3);
     }
-    Serial.println(results.value);
-    irrecv.resume();
+    IrReceiver.resume();
   }
-  delay(300);
 }

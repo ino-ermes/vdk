@@ -1,40 +1,44 @@
 #include <IRremote.h>
 
-IRsend irsend(3);
+#define DISABLE_CODE_FOR_RECEIVER  // Disables restarting receiver after each send. Saves 450 bytes program memory and 269 bytes RAM if receiving functions are not used.
+#define IR_SEND_PIN 3
 
-const int trig = 8;  // chân trig của HC-SR04
-const int echo = 7;  // chân echo của HC-SR04
+const int trig = 7;
+const int echo = 6;
+unsigned long duration;
+int distance;
 
 void setup() {
-  pinMode(trig, OUTPUT);  // chân trig sẽ phát tín hiệu
-  pinMode(echo, INPUT);   // chân echo sẽ nhận tín hiệu
+  pinMode(LED_BUILTIN, OUTPUT);
+
   Serial.begin(9600);
+
+  IrSender.begin(IR_SEND_PIN);
+
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
 }
 
-unsigned long duration;  // biến đo thời gian
-int distance;            // biến lưu khoảng cách
+uint8_t sCommand = 0x34;
+uint8_t sRepeats = 0;
 
 void loop() {
 
-  /* Phát xung từ chân trig */
-  digitalWrite(trig, 0);  // tắt chân trig
+  digitalWrite(trig, 0);
   delayMicroseconds(2);
-  digitalWrite(trig, 1);  // phát xung từ chân trig
-  delayMicroseconds(5);   // xung có độ dài 5 microSeconds
-  digitalWrite(trig, 0);  // tắt chân trig
+  digitalWrite(trig, 1);
+  delayMicroseconds(5);
+  digitalWrite(trig, 0);
 
-  /* Tính toán thời gian */
-  duration = pulseIn(echo, HIGH);                  // Đo độ rộng xung HIGH ở chân echo.
-  distance = int((float)duration / 2.0 / 29.412); // Tính khoảng cách đến vật.
+  duration = pulseIn(echo, HIGH);
+  distance = int((float)duration / 2.0 / 29.412);
 
-  /* In kết quả ra Serial Monitor */
-  Serial.print(distance);
-  Serial.println("cm");
+  Serial.println(distance);
 
-  if (distance < 10) {
-    irsend.sendRC5(0x0, 8);
+  if (distance > 10) {
+    IrSender.sendNEC(0x00, sCommand, sRepeats);
   } else {
-    irsend.sendRC5(0x1, 8);
+    IrSender.sendNEC(0x00, sCommand + 0x11, sRepeats);
   }
-  delay(100);
+  delay(1000);
 }

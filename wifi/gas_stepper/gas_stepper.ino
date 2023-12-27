@@ -9,10 +9,15 @@ ESP8266WebServer server(80);
 
 #include <TinyStepper.h>
 #define HALFSTEPS 4096
-TinyStepper stepper(HALFSTEPS, D1, D2, D3, D4);
+#define IN1 D1
+#define IN2 D2
+#define IN3 D3
+#define IN4 D4
+TinyStepper stepper(HALFSTEPS, IN1, IN2, IN3, IN4);
 void handleStepper() {
   String angleString = server.arg("angle");
   int angle = angleString.toInt();
+  Serial.println(angle);
   stepper.Move(angle);
   server.send(200, "text/plain", "success");
 }
@@ -50,6 +55,10 @@ void setup() {
 
   pinMode(gasPin, INPUT);
 
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
 
   delay(1000);
 }
