@@ -10,7 +10,7 @@ Servo myservo;
 void setup() {
   Serial.begin(9600);
   BTSerial.begin(9600);
-  myservo.attach(2);
+  myServo.attach(2, 500, 2500);
 }
 
 int angle = 90;

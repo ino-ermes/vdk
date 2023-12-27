@@ -1,8 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-const char* ssid = "Redmi Note 9S";
-const char* password = "qazwsx123";
+// const char* ssid = "Redmi Note 9S";
+// const char* password = "qazwsx123";
+const char* ssid = "ICOFFEE";
+const char* password = "xincamon";
 
 // Khởi tạo đối tượng máy chủ web
 ESP8266WebServer server(80);
@@ -15,6 +17,8 @@ void handleServo() {
   Serial.println(angleString);
   int angle = angleString.toInt();
   myservo.write(angle);
+  delay(500);
+  myservo.write(0);
   server.send(200, "text/plain", "success");
 }
 
@@ -76,7 +80,7 @@ void setup() {
   Serial.println("/");
 
   // stepper.Enable();
-  myservo.attach(D5);
+  myservo.attach(D5, 500, 2500);
   dht.begin();
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
