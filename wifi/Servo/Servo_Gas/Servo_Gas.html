@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>ESP8266 Control Panel</title>
+   </head>
+   <!-- <body onload="updateData()"> -->
+   <body>
+      <h1>ESP8266 Control Panel</h1>
+      <h2>Điều khiển Servo</h2>
+      <input type="number" id="servoAngle" placeholder="Nhập góc (0-180)" />
+      <button onclick="controlServo()">Điều khiển Servo</button>
+      <p id="gas">Loading...</p>
+      <script>
+         var espServer = "http://192.168.32.45"
+         function getGas() {
+            fetch(espServer + "/gas")
+                 .then((response) => {
+                     if (!response.ok) {
+                         throw new Error('Network response was not ok');
+                     }
+                     return response.text();
+                 })
+                 .then((data) => {
+                     console.log("gas:", data);
+                     document.getElementById("gas").innerText = "gas: " + data;
+                 })
+                 .catch(error => console.error('Error:', error));
+        }
+        
+         function updateData() {
+            getGas();
+         }
+
+         function controlServo() {
+             const angle = document.getElementById("servoAngle").value;
+             fetch(espServer + `/servo?angle=${angle}`)
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error('Network response was not ok');
+                     }
+                     console.log("Servo controlled");
+                 })
+                 .catch(error => console.error('Error:', error));
+         }
+
+         setInterval(updateData, 1000);
+      </script>
+   </body>
+</html>
