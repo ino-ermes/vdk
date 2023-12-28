@@ -3,14 +3,12 @@
 
 const char* ssid = "Redmi Note 9S";
 const char* password = "qazwsx123";
-// const char* ssid = "ICOFFEE";
-// const char* password = "xincamon";
 
 // Khởi tạo đối tượng máy chủ web
 ESP8266WebServer server(80);
 
-
-#define ENA D4 // D4 (chân số) 
+// OUT1 và OUT2 nối với động cơ DC 
+// 12V L298N với 5V Arduino , GND L289N nối với GND Arduino
 #define IN1 D6 // D6 (chân số) 
 #define IN2 D5 // D5 (chân số)
 #define MAX_SPEED 255
@@ -19,36 +17,28 @@ ESP8266WebServer server(80);
 void Lui(int speed) {
   speed = constrain(speed, MIN_SPEED, MAX_SPEED);  
   digitalWrite(IN1, LOW);                      
-  digitalWrite(IN2, HIGH);
-  analogWrite(ENA, speed);
+  analogWrite(IN2, speed);
 }
 void Dung() {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
-  analogWrite(ENA, 0);
 }
 void Tien(int speed) {
-  speed = constrain(speed, MIN_SPEED, MAX_SPEED);  
-  digitalWrite(IN1, HIGH);                      
+  speed = constrain(speed, MIN_SPEED, MAX_SPEED);
+  analogWrite(IN1, speed); 
   digitalWrite(IN2, LOW);
-  analogWrite(ENA, speed);
 }
 void NhanhDan(){
-  // Tien(255);
-  // delay(255);
-  digitalWrite(IN1, HIGH);                      
-  digitalWrite(IN2, LOW);
-  for (int i = 0 ; i <= 255 ; i++){
-    analogWrite(ENA , i);
+  digitalWrite(IN2 , LOW);
+  for (int i = 100 ; i <= 255 ; i++){
+    analogWrite(IN1 , i);
     delay(50);
   }
 }
 void ChamDan(){
-  // Tien(255);
-  digitalWrite(IN1, HIGH);                      
-  digitalWrite(IN2, LOW);
-  for (int i = 255; i >= 0 ; i--){
-    analogWrite(ENA , i);
+  digitalWrite(IN2 , LOW);
+  for (int i = 255; i >= 100 ; i--){
+    analogWrite(IN1 , i);
     delay(50);
   }
 }
@@ -104,7 +94,6 @@ void setup() {
 
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
-  pinMode(ENA, OUTPUT);
 
   delay(1000);
 }
