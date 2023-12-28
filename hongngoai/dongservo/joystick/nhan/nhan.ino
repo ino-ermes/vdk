@@ -3,7 +3,7 @@
 
 
 #include <Servo.h>
-Servo myservo;
+Servo myServo;
 const int pinServo = 9;
 
 void setup() {
@@ -18,14 +18,14 @@ void loop() {
     IrReceiver.printIRResultShort(&Serial);
 
     if(IrReceiver.decodedIRData.command == 0x34) {
-      myservo.write(90);
+      myServo.write(150);
       delay(500);
-      myservo.write(0);
+      myServo.write(0);
       delay(250);
     } else {
-      myservo.write(45);
+      myServo.write(90);
       delay(500);
-      myservo.write(0);
+      myServo.write(0);
       delay(250);
     }
     IrReceiver.resume();

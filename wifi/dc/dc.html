@@ -12,32 +12,33 @@
     <label for="clockwise">Thuận chiều</label><br>
     <input type="radio" id="anticlockwise" name="direction" value="1">
     <label for="anticlockwise">Ngược chiều</label><br>
+    <input type="radio" id="nhanhdan" name="direction" value="2">
+    <label for="nhanhdan">Nhanh dần</label><br>
+    <input type="radio" id="chamdan" name="direction" value="3">
+    <label for="chamdan">Chậm dần</label><br>
 
     <!-- Slider để điều chỉnh tốc độ -->
-    <input type="range" min="0" max="255" value="0" id="speedSlider"><br>
+    <!-- <input type="range" min="0" max="255" value="0" id="speedSlider"><br> -->
 
     <!-- Button để điều khiển động cơ DC -->
     <button onclick="controlDCMotor()">Điều khiển Động cơ DC</button>
     <p id="dcMotorStatus">Loading...</p>
 
     <script>
-        var espServer = "http://192.168.34.55";
+        var espServer = "http://192.168.191.198";
 
         function controlDCMotor() {
             // Lấy giá trị của radio button chọn hướng quay
-            var direction = document.querySelector('input[name="direction"]:checked').value;
-
-            // Lấy giá trị của slider tốc độ
-            var speed = document.getElementById("speedSlider").value;
+            var mode = document.querySelector('input[name="direction"]:checked').value;
 
             // Gửi yêu cầu điều khiển động cơ DC đến ESP8266
-            fetch(espServer + `/dc-motor?direction=${direction}&speed=${speed}`)
+            fetch(espServer + `/dc-motor?mode=${mode}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     console.log("DC Motor controlled");
-                    document.getElementById('dcMotorStatus').innerText = `Huong: ${direction == 0 ? 'Thuan':'Nguoc'}, Toc do: ${speed}`
+                    document.getElementById('dcMotorStatus').innerText = 'Thanh cong'
                 })
                 .catch(error => console.error('Error:', error));
         }

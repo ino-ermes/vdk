@@ -1,14 +1,16 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-// const char* ssid = "Redmi Note 9S";
-// const char* password = "qazwsx123";
-const char* ssid = "ICOFFEE";
-const char* password = "xincamon";
+const char* ssid = "Redmi Note 9S";
+const char* password = "qazwsx123";
+// const char* ssid = "ICOFFEE";
+// const char* password = "xincamon";
 
 // Khởi tạo đối tượng máy chủ web
 ESP8266WebServer server(80);
 
+
+#define ENA D4 // D4 (chân số) 
 #define IN1 D6 // D6 (chân số) 
 #define IN2 D5 // D5 (chân số)
 #define MAX_SPEED 255
@@ -17,45 +19,59 @@ ESP8266WebServer server(80);
 void Lui(int speed) {
   speed = constrain(speed, MIN_SPEED, MAX_SPEED);  
   digitalWrite(IN1, LOW);                      
-  analogWrite(IN2, speed);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA, speed);
 }
 void Dung() {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
+  analogWrite(ENA, 0);
 }
 void Tien(int speed) {
-  speed = constrain(speed, MIN_SPEED, MAX_SPEED);
-  analogWrite(IN1, speed); 
+  speed = constrain(speed, MIN_SPEED, MAX_SPEED);  
+  digitalWrite(IN1, HIGH);                      
   digitalWrite(IN2, LOW);
+  analogWrite(ENA, speed);
 }
 void NhanhDan(){
-  digitalWrite(IN2 , LOW);
-  for (int i = 100 ; i <= 255 ; i++){
-    analogWrite(IN1 , i);
+  // Tien(255);
+  // delay(255);
+  digitalWrite(IN1, HIGH);                      
+  digitalWrite(IN2, LOW);
+  for (int i = 0 ; i <= 255 ; i++){
+    analogWrite(ENA , i);
     delay(50);
   }
 }
 void ChamDan(){
-  digitalWrite(IN2 , LOW);
-  for (int i = 255; i >= 100 ; i--){
-    analogWrite(IN1 , i);
+  // Tien(255);
+  digitalWrite(IN1, HIGH);                      
+  digitalWrite(IN2, LOW);
+  for (int i = 255; i >= 0 ; i--){
+    analogWrite(ENA , i);
     delay(50);
   }
 }
 
 void handleDC() {
-  String directionS = server.arg("direction");
-  String speedS = server.arg("speed");
+  String modeArg = server.arg("mode");
 
-  int direction = directionS.toInt();
-  int speed = speedS.toInt();
-  Serial.println(direction);
-  Serial.println(speed);
+  int mode = modeArg.toInt();
+  Serial.println(mode);
 
-  if(direction == 0) {
-    Lui(speed);
-  } else if(direction == 1) {
-    Tien(speed);
+  switch(mode) {
+    case 0:
+      Tien(255);
+      break;
+    case 1:
+      Lui(255);
+      break;
+    case 2:
+      NhanhDan();
+      break;
+    case 3:
+      ChamDan();
+      break;
   }
 
   server.send(200, "text/plain", "success");
@@ -88,6 +104,7 @@ void setup() {
 
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
+  pinMode(ENA, OUTPUT);
 
   delay(1000);
 }
